@@ -1,0 +1,60 @@
+version: 2
+jobs:
+  rspec:
+    docker:
+      - image: ehdevops/ruby240:latest
+      - image: redis:latest
+    environment:
+      TZ: "/usr/share/zoneinfo/Australia/Sydney"
+    working_directory: ~/kafka_handle_event
+    steps:
+      - checkout
+      - run: cp *.gemspec gemspec
+      - restore_cache:
+          keys:
+            - bundle-caches{{ checksum "gemspec" }}
+      - run: bundle check || bundle install --path=vendor/bundle --jobs=4 --retry=3
+      - save_cache:
+          key: bundle-caches{{ checksum "gemspec" }}
+          paths:
+            - ~/kafka_handle_event/vendor/bundle
+      - run: mkdir -p tmp/; mkdir -p tmp/cache
+      - run: bundle exec rspec
+  publish:
+    docker:
+      - image: ehdevops/ruby240:latest
+    environment:
+      TZ: "/usr/share/zoneinfo/Australia/Sydney"
+    working_directory: ~/kafka_handle_event
+    steps:
+      - checkout
+      - run: cp *.gemspec gemspec
+      - restore_cache:
+          keys:
+            - bundle-caches{{ checksum "gemspec" }}
+      - run: bundle check || bundle install --path=vendor/bundle --jobs=4 --retry=3
+      - run:
+          name: Deploy to gemfury 
+          command: |
+            if [ $CIRCLE_BRANCH == 'master' ]
+            then
+              bundle exec ruby scripts/publish.rb
+            else
+              bundle exec ruby scripts/publish_alpha.rb $CIRCLE_SHA1
+            fi
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - rspec:
+          context: org-global
+      - publish:
+          context: org-global
+          filters:
+            branches:
+              only:
+                - master
+                - staging
+          requires:
+            - rspec
