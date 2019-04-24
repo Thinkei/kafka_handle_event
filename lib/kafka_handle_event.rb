@@ -1,5 +1,7 @@
 require 'kafka_handle_event/config'
 require 'kafka_handle_event/event_proxy'
+require 'kafka_handle_event/event_handler'
+require 'active_support/all'
 
 module KafkaHandleEvent
   @registry = {}
@@ -24,8 +26,12 @@ module KafkaHandleEvent
     end
 
     def handle_event(message)
+      message = message.with_indifferent_access
+      topic_name = message[:topic_type]
+      event_proxies = @registry.values.select { |proxy| proxy.topics.include?(topic_name) }
+      event_proxies.each do |event_proxy|
+        KafkaHandleEvent::EventHandler.handle_event(event_proxy, message)
+      end
     end
-
-    private
   end
 end

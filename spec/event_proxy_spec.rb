@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'kafka_handle_event/event_proxy'
 
-describe EventProxy do
+describe KafkaHandleEvent::EventProxy do
   let(:model_name) { :model_name }
   let(:subject) { described_class.new(model_name) }
 
@@ -108,4 +108,24 @@ describe EventProxy do
       expect(subject.on_destroy_block).to eq(block)
     end
   end
+
+  describe 'model_class' do
+    context 'model is exist' do
+      let(:model_name) { :model_a }
+
+      it 'returns model class' do
+        expect(subject.model_class).to eq(ModelA)
+      end
+    end
+
+    context 'model is not exist' do
+      it 'returns nil' do
+        expect(subject.model_class).to be_nil
+      end
+    end
+  end
 end
+
+class ModelA
+end
+

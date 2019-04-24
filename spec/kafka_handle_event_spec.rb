@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'kafka_handle_event'
+require 'kafka_handle_event/event_handler'
 
 describe KafkaHandleEvent do
   describe '#configure' do
@@ -32,10 +33,13 @@ describe KafkaHandleEvent do
       end
     end
 
+  end
+
     describe '#handle_event' do
+      let(:topic) { 'has not register topic' }
       let(:create_message) do
         {
-          'topic_type' => 'has not register topic',
+          'topic_type' => topic,
           'event' => 'create',
           'uuid' => 'member_uuid',
           'data' => {
@@ -51,11 +55,25 @@ describe KafkaHandleEvent do
         }
       end
 
-      context 'event has not registered to handle' do
+      context 'event has not been registered to handle' do
         it 'does nothing' do
+          expect(KafkaHandleEvent::EventHandler).not_to receive(:handle_event)
+          described_class.handle_event(create_message)
+        end
+      end
+
+      context 'event has been registered to handle' do
+        let(:topic) { 'aaa_topic' }
+        before do
+          described_class.register :member do
+            topic 'aaa_topic'
+          end
+        end
+
+        it 'calls handle_event of event handler' do
+          expect(KafkaHandleEvent::EventHandler).to receive(:handle_event)
           described_class.handle_event(create_message)
         end
       end
     end
-  end
 end
