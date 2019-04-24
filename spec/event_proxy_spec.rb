@@ -48,9 +48,64 @@ describe EventProxy do
 
   describe 'do_create' do
     let(:block) { -> (data) { p data } }
+
     it 'stores do create block' do
       subject.do_create block
       expect(subject.do_create_block).to eq(block)
+    end
+  end
+
+  describe 'do_create' do
+    let(:block) { -> (data) { p data } }
+
+    it 'stores do create block' do
+      subject.do_create block
+      expect(subject.do_create_block).to eq(block)
+    end
+  end
+
+  describe 'do_update' do
+    let(:block) { -> (data) { p data } }
+
+    it 'stores do update block' do
+      subject.do_update block
+      expect(subject.do_update_block).to eq(block)
+    end
+  end
+
+  describe 'do_destroy' do
+    let(:block) { -> (data) { p data } }
+
+    it 'stores do destroy block' do
+      subject.do_destroy block
+      expect(subject.do_destroy_block).to eq(block)
+    end
+  end
+
+  describe 'on_create' do
+    let(:block) { -> (data) { p data } }
+
+    it 'stores do create block' do
+      subject.on_create block
+      expect(subject.on_create_block).to eq(block)
+    end
+  end
+
+  describe 'on_update' do
+    let(:block) { -> (data) { p data } }
+
+    it 'stores do update block' do
+      subject.on_update block
+      expect(subject.on_update_block).to eq(block)
+    end
+  end
+
+  describe 'on_destroy' do
+    let(:block) { -> (data) { p data } }
+
+    it 'stores do destroy block' do
+      subject.on_destroy block
+      expect(subject.on_destroy_block).to eq(block)
     end
   end
 end
