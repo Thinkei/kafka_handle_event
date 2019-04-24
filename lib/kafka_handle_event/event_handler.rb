@@ -37,6 +37,21 @@ module KafkaHandleEvent
       proxy.model_class.create(mapped_attributes)
     end
 
+    def default_do_update
+      id = mapped_attributes[proxy.primaries[0]]
+      record = proxy.model_class.find_or_initialize_by(id: id)
+      record.attributes = mapped_attributes
+      record.save
+      record
+    end
+
+    def default_do_destroy
+      id = mapped_attributes[proxy.primaries[0]]
+      record = proxy.model_class.find_by(id: id)
+      record&.destroy
+      record
+    end
+
     def mapped_attributes
       @mapped_attributes ||= KafkaHandleEvent::AttrbuteMapper.new(proxy, message).attributes
     end
