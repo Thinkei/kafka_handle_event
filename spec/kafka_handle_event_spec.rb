@@ -9,13 +9,52 @@ describe KafkaHandleEvent do
   end
 
   describe '#register' do
-    describe 'topic method' do
-      it 'adds topic to topics list' do
+    it 'can call register to register event' do
+      described_class.register :member do
+        topic 'topic_name'
+        primary_column :id
+        map_column :name, :name, 'Default name'
+      end
+    end
+
+    describe '#topics method' do
+      it 'gets topics list' do
         described_class.register :member do
           topic 'topic_name'
+          topic 'topic_name_2'
         end
 
-        expect(described_class.topics).to eq(['topic_name'])
+        described_class.register :member_2 do
+          topic 'topic_name_3'
+        end
+
+        expect(described_class.topics).to eq(['topic_name', 'topic_name_2', 'topic_name_3'])
+      end
+    end
+
+    describe '#handle_event' do
+      let(:create_message) do
+        {
+          'topic_type' => 'has not register topic',
+          'event' => 'create',
+          'uuid' => 'member_uuid',
+          'data' => {
+            'start_date' => '01/01/2016',
+            'date_of_birth' => '02/02/1990',
+            'active' => true,
+            'first_name' => 'Hoang',
+            'last_name' => 'Tran',
+            'avatar_url' => '/avartar.png',
+            'email' => 'email@email.com',
+            'organisation_uuid' => 'organisation_uuid',
+          }
+        }
+      end
+
+      context 'event has not registered to handle' do
+        it 'does nothing' do
+          described_class.handle_event(create_message)
+        end
       end
     end
   end

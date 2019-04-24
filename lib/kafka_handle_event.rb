@@ -22,5 +22,10 @@ module KafkaHandleEvent
     def topics
       @registry.values.map(&:topics).flatten
     end
+
+    def handle_event(message)
+    end
+
+    private
   end
 end
