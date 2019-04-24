@@ -11,6 +11,9 @@ module KafkaHandleEvent
       @model_name = mobel_name
       @topics = []
       @attribute_mapper = []
+      @on_create_block = -> (a, b) {}
+      @on_update_block = -> (a, b) {}
+      @on_destroy_block = -> (a, b) {}
     end
 
     def topic(topic)

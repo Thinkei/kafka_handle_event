@@ -30,7 +30,7 @@ module KafkaHandleEvent
       topic_name = message[:topic_type]
       event_proxies = @registry.values.select { |proxy| proxy.topics.include?(topic_name) }
       event_proxies.each do |event_proxy|
-        KafkaHandleEvent::EventHandler.handle_event(event_proxy, message)
+        KafkaHandleEvent::EventHandler.new(event_proxy, message).handle_event
       end
     end
   end

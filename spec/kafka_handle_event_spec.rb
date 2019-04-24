@@ -57,7 +57,7 @@ describe KafkaHandleEvent do
 
       context 'event has not been registered to handle' do
         it 'does nothing' do
-          expect(KafkaHandleEvent::EventHandler).not_to receive(:handle_event)
+          expect_any_instance_of(KafkaHandleEvent::EventHandler).not_to receive(:handle_event)
           described_class.handle_event(create_message)
         end
       end
@@ -71,7 +71,7 @@ describe KafkaHandleEvent do
         end
 
         it 'calls handle_event of event handler' do
-          expect(KafkaHandleEvent::EventHandler).to receive(:handle_event)
+          expect_any_instance_of(KafkaHandleEvent::EventHandler).to receive(:handle_event)
           described_class.handle_event(create_message)
         end
       end
