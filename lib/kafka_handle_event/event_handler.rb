@@ -20,15 +20,17 @@ module KafkaHandleEvent
 
     private
 
-    def handle_create
-      created_record = nil
-      if proxy.model_class && proxy.do_create_block.nil?
-        created_record = default_do_create
-      else
-        raise "Need to setup do_create on model #{proxy.model_name}" unless proxy.do_create_block
-        created_record = proxy.do_create_block.call(mapped_attributes)
+    ['create', 'update', 'destroy'].each do |type|
+      define_method "handle_#{type}" do
+        created_record = nil
+        if proxy.model_class && proxy.public_send("do_#{type}_block").nil?
+          created_record = self.send("default_do_#{type}")
+        else
+          raise "Need to setup do_#{type} on model #{proxy.model_name}" unless proxy.public_send("do_#{type}_block")
+          created_record = proxy.public_send("do_#{type}_block").call(mapped_attributes)
+        end
+        proxy.public_send("on_#{type}_block").call(created_record, message)
       end
-      proxy.on_create_block.call(created_record, message)
     end
 
     def default_do_create
