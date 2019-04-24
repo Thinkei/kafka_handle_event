@@ -66,17 +66,53 @@ KafkaHandleEvent.register :member do
   map_column :last_name, :last_name
   map_column :email, :email
 
-  on_create do |record, external_record|
+  on_create do |record, raw_message|
     #callback after create
   end
 
-  on_update do |record, external_record|
+  on_update do |record, raw_message|
     #callback after update
   end
 
-  on_destroy do |record, external_record|
+  on_destroy do |record, raw_message|
     #callback after destroy
   end
 end
 
+```
+
+To override default behaviour of sync event
+
+```ruby
+KafkaHandleEvent.register :member do
+  topic 'EmploymentHero.Member'
+
+  primary_column :id, :uuid 
+  map_column :organisation_id, :organisation_uuid
+  map_column :avatar_url, :avatar_url
+  map_column :first_name, :first_name
+  map_column :last_name, :last_name
+  map_column :email, :email
+
+  do_create do |mapped_attributes|
+  end
+
+  do_update do |mapped_attributes|
+  end
+
+  do_destroy do |mapped_attributes|
+  end
+
+  on_create do |record, raw_message|
+    #callback after create
+  end
+
+  on_update do |record, raw_message|
+    #callback after update
+  end
+
+  on_destroy do |record, raw_message|
+    #callback after destroy
+  end
+end
 ```
