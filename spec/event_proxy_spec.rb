@@ -45,4 +45,12 @@ describe EventProxy do
       expect(subject.attribute_mapper).to include([:internal, :external, default_value])
     end
   end
+
+  describe 'do_create' do
+    let(:block) { -> (data) { p data } }
+    it 'stores do create block' do
+      subject.do_create block
+      expect(subject.do_create_block).to eq(block)
+    end
+  end
 end
