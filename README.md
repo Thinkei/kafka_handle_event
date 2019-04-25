@@ -48,7 +48,8 @@ New:
       end
 
       consumer.each_message(max_wait_time: 2) do |message|
-        KafkaHandleEvent.handle_event(message)
+        new_message = JSON.parse(message.value).merge(topic_type: message.topic)
+        KafkaHandleEvent.handle_event(new_message)
       end
 ```
 
