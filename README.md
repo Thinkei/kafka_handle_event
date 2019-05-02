@@ -65,7 +65,9 @@ KafkaHandleEvent.register :member do
   map_column :avatar_url, :avatar_url
   map_column :first_name, :first_name
   map_column :last_name, :last_name
-  map_column :email, :email
+  map_column :email do |raw_message|
+    raw_message[:data][:user_email]
+  end
 
   on_create do |record, raw_message|
     #callback after create
