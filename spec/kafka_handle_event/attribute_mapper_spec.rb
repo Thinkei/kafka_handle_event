@@ -87,5 +87,29 @@ describe KafkaHandleEvent::AttrbuteMapper do
         expect(described_class.new(proxy, message).attributes).to eq(expected_attributes)
       end
     end
+
+    context 'destroy mesage' do
+      let(:message) do
+        {
+          'topic_type' => 'topic_name',
+          'event' => 'create',
+          'uuid' => 'member_uuid',
+        }
+      end
+
+      let(:expected_attributes) do
+        {
+          id: 'member_uuid',
+        }
+      end
+
+      before do
+        proxy.primary_column :id, :uuid
+      end
+
+      it 'returns attributes after mapped' do
+        expect(described_class.new(proxy, message).attributes).to eq(expected_attributes)
+      end
+    end
   end
 end

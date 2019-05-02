@@ -33,7 +33,11 @@ module KafkaHandleEvent
       internal_column = mapper[0]
       external_column = mapper[1]
       default_value = mapper[2]
-      message['data'][external_column] || default_value
+      if message[:data]
+        message[:data][external_column] || default_value
+      else
+        default_value
+      end
     end
 
     def get_block_map_value(mapper, message)
