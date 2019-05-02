@@ -39,10 +39,16 @@ describe KafkaHandleEvent::EventProxy do
 
   describe '#map_column' do
     let(:default_value) { 'default_value' }
+    let(:map_block) { -> (raw_attrs) {} }
 
     it 'adds column to attribute_mapper' do
       subject.map_column :internal, :external, default_value
       expect(subject.attribute_mapper).to include([:internal, :external, default_value])
+    end
+
+    it 'allows to add mapper as a block' do
+      subject.map_column :internal, map_block, default_value
+      expect(subject.attribute_mapper).to include([:internal, map_block, default_value])
     end
   end
 

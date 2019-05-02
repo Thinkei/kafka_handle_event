@@ -17,12 +17,30 @@ module KafkaHandleEvent
       attributes[internal_primary_id] = message[external_primary_id]
       attributes = mappers.inject(attributes) do |result, mapper|
         internal_column = mapper[0]
-        external_column = mapper[1]
-        default_value = mapper[2]
-        result[internal_column] = message['data'][external_column] || default_value
+        if mapper[1].is_a? Proc
+          result[internal_column] = get_block_map_value(mapper, message)
+        else
+          result[internal_column] = get_attrbute_map_value(mapper, message)
+        end
         result
       end
       attributes
     end
+
+    private
+
+    def get_attrbute_map_value(mapper, message)
+      internal_column = mapper[0]
+      external_column = mapper[1]
+      default_value = mapper[2]
+      message['data'][external_column] || default_value
+    end
+
+    def get_block_map_value(mapper, message)
+      internal_column = mapper[0]
+      block = mapper[1]
+      block.call(message)
+    end
+
   end
 end

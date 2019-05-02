@@ -26,8 +26,15 @@ module KafkaHandleEvent
       @primaries = [internal_id, external_id]
     end
 
-    def map_column(internal, external, default_value = nil)
-      @attribute_mapper << [internal, external, default_value]
+    def map_column(*args, &block)
+      internal = args[0]
+      external = args[1]
+      default_value = args[2]
+      if block_given?
+        @attribute_mapper << [internal, block, nil]
+      else
+        @attribute_mapper << [internal, external, default_value]
+      end
     end
 
     def do_create(block)
