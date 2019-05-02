@@ -1,3 +1,5 @@
+require 'kafka_handle_event/attribute_mapper'
+
 module KafkaHandleEvent
   class EventHandler
     attr_accessor :proxy, :message
