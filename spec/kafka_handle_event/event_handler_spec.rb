@@ -36,7 +36,7 @@ describe KafkaHandleEvent::EventHandler do
         context 'provide custom do_create block' do
           let(:custom_do_create) { -> (attrs) { p attrs } }
           before do
-            proxy.do_create custom_do_create
+            proxy.do_create &custom_do_create
             proxy.primary_column :id, :uuid
           end
           it 'calls custom do_create block' do
@@ -52,7 +52,7 @@ describe KafkaHandleEvent::EventHandler do
           let(:proxy) { KafkaHandleEvent::EventProxy.new(:randome) }
           let(:custom_do_create) { -> (attrs) { p attrs } }
           before do
-            proxy.do_create custom_do_create
+            proxy.do_create &custom_do_create
             proxy.primary_column :id, :uuid
           end
 
@@ -84,7 +84,7 @@ describe KafkaHandleEvent::EventHandler do
         let(:on_create_block) { -> (created_record, message) { } }
         before do
           proxy.primary_column :id, :uuid
-          proxy.on_create on_create_block
+          proxy.on_create &on_create_block
         end
         let(:created_model) { double }
 

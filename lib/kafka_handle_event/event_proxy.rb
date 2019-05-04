@@ -37,27 +37,27 @@ module KafkaHandleEvent
       end
     end
 
-    def do_create(block)
+    def do_create(&block)
       @do_create_block = block
     end
 
-    def do_update(block)
+    def do_update(&block)
       @do_update_block = block
     end
 
-    def do_destroy(block)
+    def do_destroy(&block)
       @do_destroy_block = block
     end
 
-    def on_create(block)
+    def on_create(&block)
       @on_create_block = block
     end
 
-    def on_update(block)
+    def on_update(&block)
       @on_update_block = block
     end
 
-    def on_destroy(block)
+    def on_destroy(&block)
       @on_destroy_block = block
     end
 
