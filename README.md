@@ -119,3 +119,29 @@ KafkaHandleEvent.register :member do
   end
 end
 ```
+
+Add helpers
+
+
+```ruby
+KafkaHandleEvent.register :member do
+  topic 'EmploymentHero.Member'
+
+  primary_column :id, :uuid 
+  map_column :organisation_id, :organisation_uuid
+
+  do_create do |mapped_attributes|
+    do_something
+  end
+
+  do_update do |mapped_attributes|
+    do_something
+  end
+
+  helpers do
+    def do_something
+      # ...do something
+    end
+  end
+end
+```

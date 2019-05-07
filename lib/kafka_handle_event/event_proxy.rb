@@ -4,7 +4,8 @@ module KafkaHandleEvent
   class EventProxy
     attr_accessor :model_name, :topics, :attribute_mapper, :primaries,
       :do_create_block, :do_update_block, :do_destroy_block,
-      :on_create_block, :on_update_block, :on_destroy_block
+      :on_create_block, :on_update_block, :on_destroy_block,
+      :helpers_block
 
 
     def initialize(mobel_name)
@@ -59,6 +60,10 @@ module KafkaHandleEvent
 
     def on_destroy(&block)
       @on_destroy_block = block
+    end
+
+    def helpers(&block)
+      self.instance_eval(&block)
     end
 
     def model_class

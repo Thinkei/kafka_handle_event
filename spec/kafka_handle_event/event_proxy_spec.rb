@@ -115,6 +115,21 @@ describe KafkaHandleEvent::EventProxy do
     end
   end
 
+  describe 'helpers' do
+    let(:block) do
+      Proc.new {
+        def test_method
+          p 'aaa'
+        end
+      }
+    end
+
+    it 'stores helpers block' do
+      subject.helpers &block
+      expect { subject.test_method }.not_to raise_error
+    end
+  end
+
   describe 'model_class' do
     context 'model is exist' do
       let(:model_name) { :model_a }
