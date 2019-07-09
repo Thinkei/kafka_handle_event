@@ -52,13 +52,19 @@ module KafkaHandleEvent
     end
 
     def default_sequel_do_create
+      proxy.model_class.create(mapped_attributes)
     end
 
     def default_activerecord_do_create
-        proxy.model_class.create(mapped_attributes)
+      proxy.model_class.create(mapped_attributes)
     end
 
     def default_sequel_do_update
+      id = mapped_attributes[proxy.primaries[0]]
+      record = proxy.model_class.find_or_new(id: id)
+      record.set(mapped_attributes)
+      record.save
+      record
     end
 
     def default_activerecord_do_update
@@ -78,6 +84,10 @@ module KafkaHandleEvent
     end
 
     def default_sequel_do_destroy
+      id = mapped_attributes[proxy.primaries[0]]
+      record = proxy.model_class.find(id: id)
+      record&.destroy
+      record
     end
 
     def default_activerecord_do_destroy
