@@ -6,6 +6,32 @@ Helper to handle kafka events easier
 gem 'kafka_handle_event'
 ```
 
+## Config
+Add `config/initializers/kafka_handle_event.rb`
+```ruby
+KafkaHandleEvent.configure do |config|
+  # default adatper is :active_record
+  config.adapter = :sequel # in case you use sequel instead of active record
+end
+```
+
+Customize default behavior
+```ruby
+# config/initializers/kafka_handle_event.rb
+KafkaHandleEvent::DatabaseAdapter.register :active_record, :create, ->(model_class, attributes) do
+  # do custom logic
+end
+
+KafkaHandleEvent::DatabaseAdapter.register :active_record, :update, ->(model_class, id, attributes) do
+  # do custom logic
+end
+
+KafkaHandleEvent::DatabaseAdapter.register :active_record, :destroy, ->(model_class, id, attributes) do
+  # do custom logic
+end
+
+```
+
 ## Kafka message format
 This lib has its opinion about the message shape it support. The message should have this shape:
 ```json
