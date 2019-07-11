@@ -36,65 +36,23 @@ module KafkaHandleEvent
     end
 
     def default_do_create
-      if KafkaHandleEvent.config.adapter == :sequel
-        default_sequel_do_create
-      else
-        default_activerecord_do_create
-      end
+      default_block = KafkaHandleEvent::DatabaseAdapter
+        .default_create_block(KafkaHandleEvent.config.adapter)
+      default_block.call(proxy.model_class, mapped_attributes)
     end
 
     def default_do_update
-      if KafkaHandleEvent.config.adapter == :sequel
-        default_sequel_do_update
-      else
-        default_activerecord_do_update
-      end
-    end
-
-    def default_sequel_do_create
-      proxy.model_class.create(mapped_attributes)
-    end
-
-    def default_activerecord_do_create
-      proxy.model_class.create(mapped_attributes)
-    end
-
-    def default_sequel_do_update
+      default_block = KafkaHandleEvent::DatabaseAdapter
+        .default_update_block(KafkaHandleEvent.config.adapter)
       id = mapped_attributes[proxy.primaries[0]]
-      record = proxy.model_class.find_or_new(id: id)
-      record.set(mapped_attributes)
-      record.save
-      record
-    end
-
-    def default_activerecord_do_update
-      id = mapped_attributes[proxy.primaries[0]]
-      record = proxy.model_class.find_or_initialize_by(id: id)
-      record.attributes = mapped_attributes
-      record.save
-      record
+      default_block.call(proxy.model_class, id, mapped_attributes)
     end
 
     def default_do_destroy
-      if KafkaHandleEvent.config.adapter == :sequel
-        default_sequel_do_destroy
-      else
-        default_activerecord_do_destroy
-      end
-    end
-
-    def default_sequel_do_destroy
+      default_block = KafkaHandleEvent::DatabaseAdapter
+        .default_destroy_block(KafkaHandleEvent.config.adapter)
       id = mapped_attributes[proxy.primaries[0]]
-      record = proxy.model_class.find(id: id)
-      record&.destroy
-      record
-    end
-
-    def default_activerecord_do_destroy
-      id = mapped_attributes[proxy.primaries[0]]
-      record = proxy.model_class.find_by(id: id)
-      record&.destroy
-      record
+      default_block.call(proxy.model_class, id, mapped_attributes)
     end
 
     def mapped_attributes

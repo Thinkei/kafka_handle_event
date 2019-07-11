@@ -97,7 +97,11 @@ describe KafkaHandleEvent::EventHandler do
   end
 
   describe 'default on create block' do
-    let(:proxy) { KafkaHandleEvent::EventProxy.new(:member) }
+    let(:proxy) do
+      px = KafkaHandleEvent::EventProxy.new(:member)
+      px.primary_column(:id, :uuid)
+      px
+    end
     let(:create_message) do
       {
         'topic_type' => 'topic_name',
@@ -122,8 +126,10 @@ describe KafkaHandleEvent::EventHandler do
           config.adapter = :sequel
         end
       end
+
+      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_create_block(:sequel) }
       it 'calls default sequel do create block' do
-        expect_any_instance_of(described_class).to receive(:default_sequel_do_create)
+        expect(default_block).to receive(:call)
         described_class.new(proxy, create_message).handle_event
       end
     end
@@ -131,18 +137,24 @@ describe KafkaHandleEvent::EventHandler do
     context 'adapter is activerecord' do
       before do
         KafkaHandleEvent.configure do |config|
-          config.adapter = :activerecord
+          config.adapter = :active_record
         end
       end
+      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_create_block(:active_record) }
+
       it 'calls default activerecord do create block' do
-        expect_any_instance_of(described_class).to receive(:default_activerecord_do_create)
+        expect(default_block).to receive(:call)
         described_class.new(proxy, create_message).handle_event
       end
     end
   end
 
   describe 'default on update block' do
-    let(:proxy) { KafkaHandleEvent::EventProxy.new(:member) }
+    let(:proxy) do
+      px = KafkaHandleEvent::EventProxy.new(:member)
+      px.primary_column(:id, :uuid)
+      px
+    end
     let(:update_message) do
       {
         'topic_type' => 'topic_name',
@@ -167,8 +179,10 @@ describe KafkaHandleEvent::EventHandler do
           config.adapter = :sequel
         end
       end
+      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_update_block(:sequel) }
+
       it 'calls default sequel do update block' do
-        expect_any_instance_of(described_class).to receive(:default_sequel_do_update)
+        expect(default_block).to receive(:call)
         described_class.new(proxy, update_message).handle_event
       end
     end
@@ -176,18 +190,24 @@ describe KafkaHandleEvent::EventHandler do
     context 'adapter is activerecord' do
       before do
         KafkaHandleEvent.configure do |config|
-          config.adapter = :activerecord
+          config.adapter = :active_record
         end
       end
+      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_update_block(:active_record) }
+
       it 'calls default activerecord do update block' do
-        expect_any_instance_of(described_class).to receive(:default_activerecord_do_update)
+        expect(default_block).to receive(:call)
         described_class.new(proxy, update_message).handle_event
       end
     end
   end
 
   describe 'default on destroy block' do
-    let(:proxy) { KafkaHandleEvent::EventProxy.new(:member) }
+    let(:proxy) do
+      px = KafkaHandleEvent::EventProxy.new(:member)
+      px.primary_column(:id, :uuid)
+      px
+    end
     let(:destroy_message) do
       {
         'topic_type' => 'topic_name',
@@ -212,8 +232,10 @@ describe KafkaHandleEvent::EventHandler do
           config.adapter = :sequel
         end
       end
+      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_destroy_block(:sequel) }
+
       it 'calls default sequel do destroy block' do
-        expect_any_instance_of(described_class).to receive(:default_sequel_do_destroy)
+        expect(default_block).to receive(:call)
         described_class.new(proxy, destroy_message).handle_event
       end
     end
@@ -221,11 +243,13 @@ describe KafkaHandleEvent::EventHandler do
     context 'adapter is activerecord' do
       before do
         KafkaHandleEvent.configure do |config|
-          config.adapter = :activerecord
+          config.adapter = :active_record
         end
       end
+      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_destroy_block(:active_record) }
+
       it 'calls default activerecord do destroy block' do
-        expect_any_instance_of(described_class).to receive(:default_activerecord_do_destroy)
+        expect(default_block).to receive(:call)
         described_class.new(proxy, destroy_message).handle_event
       end
     end
