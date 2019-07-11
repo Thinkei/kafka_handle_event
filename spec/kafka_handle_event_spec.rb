@@ -4,8 +4,13 @@ require 'kafka_handle_event/event_handler'
 
 describe KafkaHandleEvent do
   describe '#configure' do
-    it 'do somethings' do
-      expect(1).to eq(1)
+    before do
+      described_class.configure do |config|
+        config.adapter= :sequel
+      end
+    end
+    it 'sets the adapter' do
+      expect(described_class.config.adapter).to eq(:sequel)
     end
   end
 

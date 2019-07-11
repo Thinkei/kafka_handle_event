@@ -36,22 +36,23 @@ module KafkaHandleEvent
     end
 
     def default_do_create
-      proxy.model_class.create(mapped_attributes)
+      default_block = KafkaHandleEvent::DatabaseAdapter
+        .default_create_block(KafkaHandleEvent.config.adapter)
+      default_block.call(proxy.model_class, mapped_attributes)
     end
 
     def default_do_update
+      default_block = KafkaHandleEvent::DatabaseAdapter
+        .default_update_block(KafkaHandleEvent.config.adapter)
       id = mapped_attributes[proxy.primaries[0]]
-      record = proxy.model_class.find_or_initialize_by(id: id)
-      record.attributes = mapped_attributes
-      record.save
-      record
+      default_block.call(proxy.model_class, id, mapped_attributes)
     end
 
     def default_do_destroy
+      default_block = KafkaHandleEvent::DatabaseAdapter
+        .default_destroy_block(KafkaHandleEvent.config.adapter)
       id = mapped_attributes[proxy.primaries[0]]
-      record = proxy.model_class.find_by(id: id)
-      record&.destroy
-      record
+      default_block.call(proxy.model_class, id, mapped_attributes)
     end
 
     def mapped_attributes
