@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    kafka_handle_event (0.0.7)
+    kafka_handle_event (0.0.8)
       activesupport
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.2.2.1)
+    activesupport (5.2.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
