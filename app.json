@@ -1,6 +1,6 @@
 {
   "name": "kafka_handle_event",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "documents": [
     {
       "name": "README",

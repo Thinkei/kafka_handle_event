@@ -127,10 +127,26 @@ describe KafkaHandleEvent::EventHandler do
         end
       end
 
-      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_create_block(:sequel) }
-      it 'calls default sequel do create block' do
-        expect(default_block).to receive(:call)
-        described_class.new(proxy, create_message).handle_event
+      context 'when a new record' do
+        let(:create_message_without_primary_value) do
+          create_message['uuid'] = nil
+          create_message
+        end
+        let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_create_block(:sequel) }
+
+        it 'calls default sequel do create block' do
+          expect(default_block).to receive(:call)
+          described_class.new(proxy, create_message_without_primary_value).handle_event
+        end
+      end
+
+      context 'when record is existing' do
+        let(:update_block) { KafkaHandleEvent::DatabaseAdapter.default_update_block(:sequel) }
+
+        it 'calls default sequel do update block' do
+          expect(update_block).to receive(:call)
+          described_class.new(proxy, create_message).handle_event
+        end
       end
     end
 
@@ -140,11 +156,27 @@ describe KafkaHandleEvent::EventHandler do
           config.adapter = :active_record
         end
       end
-      let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_create_block(:active_record) }
 
-      it 'calls default activerecord do create block' do
-        expect(default_block).to receive(:call)
-        described_class.new(proxy, create_message).handle_event
+      context 'with new record' do
+        let(:create_message_without_primary_value) do
+          create_message['uuid'] = nil
+          create_message
+        end
+        let(:default_block) { KafkaHandleEvent::DatabaseAdapter.default_create_block(:active_record) }
+
+        it 'calls default activerecord do create block' do
+          expect(default_block).to receive(:call)
+          described_class.new(proxy, create_message_without_primary_value).handle_event
+        end
+      end
+
+      context 'when record is existing' do
+        let(:update_block) { KafkaHandleEvent::DatabaseAdapter.default_update_block(:active_record) }
+
+        it 'calls default activerecord do update block' do
+          expect(update_block).to receive(:call)
+          described_class.new(proxy, create_message).handle_event
+        end
       end
     end
   end

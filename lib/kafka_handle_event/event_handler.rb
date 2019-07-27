@@ -36,9 +36,14 @@ module KafkaHandleEvent
     end
 
     def default_do_create
-      default_block = KafkaHandleEvent::DatabaseAdapter
-        .default_create_block(KafkaHandleEvent.config.adapter)
-      default_block.call(proxy.model_class, mapped_attributes)
+      id = mapped_attributes[proxy.primaries[0]]
+      if id.present?
+        default_do_update
+      else
+        default_block = KafkaHandleEvent::DatabaseAdapter
+          .default_create_block(KafkaHandleEvent.config.adapter)
+        default_block.call(proxy.model_class, mapped_attributes)
+      end
     end
 
     def default_do_update
