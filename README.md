@@ -171,3 +171,63 @@ KafkaHandleEvent.register :member do
   end
 end
 ```
+
+
+## Testing
+### rspec
+
+Require your handlers/kafka consumer to `spec_helper`
+
+```
+# messasge_bus/kafka_subscriber.rb
+
+require './message_bus/kafka_organisation.rb'
+require './message_bus/kafka_member.rb'
+
+```
+
+Add this require
+```
+# spec/spec_helper.rb
+
+# https://stackoverflow.com/questions/11376718/require-lib-in-rspec-with-ruby-1-9-2-brings-no-such-file-to-load
+$:<< File.join(File.dirname(__FILE__), '..')
+
+require 'message_bus/kafka_subscriber.rb'
+
+```
+
+Write test for your handler
+```
+# spec/message_bus/kafka_member_spec.rb
+
+require 'rails_helper'
+require 'spec_helper'
+
+describe 'kafka_message_handler' do
+  context 'success message' do
+    let(:topic) { 'EmploymentHero.Member' }
+    let(:success_message) do
+      {
+        'topic_type' => topic,
+        'event' => 'create',
+        'uuid' => 'member_id',
+        'data' => {
+          'name': 'Huy be de',
+          'title': 'Mobile Project Lead LOL'
+        }
+      }
+    end
+
+    it 'update create member' do
+      expect {
+	KafkaHandleEvent.handle_event(success_message)
+      }.to change(Member, :count).by(1)
+    end
+  end
+
+  ...
+end
+
+
+```
