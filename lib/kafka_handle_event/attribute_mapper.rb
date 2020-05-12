@@ -1,5 +1,5 @@
 module KafkaHandleEvent
-  class AttrbuteMapper
+  class AttributeMapper
     attr_accessor :proxy, :message
     def initialize(proxy, message)
       @proxy = proxy
@@ -21,7 +21,7 @@ module KafkaHandleEvent
         result[internal_column] = if mapper[1].is_a? Proc
                                     get_block_map_value(mapper, message)
                                   else
-                                    get_attrbute_map_value(mapper, message)
+                                    get_attribute_map_value(mapper, message)
                                   end
       end
       attributes
@@ -29,7 +29,7 @@ module KafkaHandleEvent
 
     private
 
-    def get_attrbute_map_value(mapper, message)
+    def get_attribute_map_value(mapper, message)
       external_column = mapper[1]
       default_value = mapper[2]
       if message[:data] && !message[:data][external_column].nil?

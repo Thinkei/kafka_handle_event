@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'kafka_handle_event/attribute_mapper'
 require 'kafka_handle_event/event_proxy'
 
-describe KafkaHandleEvent::AttrbuteMapper do
+describe KafkaHandleEvent::AttributeMapper do
   describe '#attributes' do
     let(:message) do
       {

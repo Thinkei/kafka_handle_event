@@ -56,7 +56,7 @@ module KafkaHandleEvent
     end
 
     def mapped_attributes
-      @mapped_attributes ||= KafkaHandleEvent::AttrbuteMapper.new(proxy, message).attributes
+      @mapped_attributes ||= KafkaHandleEvent::AttributeMapper.new(proxy, message).attributes
     end
   end
 end
