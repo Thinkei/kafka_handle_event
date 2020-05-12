@@ -1,12 +1,11 @@
-# frozen_string_literal: true
+require 'json'
 
-lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'kafka_handle_event/version'
+app_path = File.expand_path('../app.json', __FILE__)
+app = JSON.parse(File.read(app_path))
 
 Gem::Specification.new do |spec|
-  spec.name          = 'kafka_handle_event'
-  spec.version       = KafkaHandleEvent::VERSION
+  spec.name          = app['name']
+  spec.version       = app['version']
   spec.authors       = ['Tuan Mai']
   spec.email         = ['tuan.mai@employmenthero.com']
 
