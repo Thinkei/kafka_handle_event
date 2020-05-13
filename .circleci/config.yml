@@ -2,7 +2,7 @@ version: 2
 jobs:
   rspec:
     docker:
-      - image: ehdevops/ruby240:latest
+      - image: ehdevops/ruby260-without-browser:latest
       - image: redis:latest
     environment:
       TZ: "/usr/share/zoneinfo/Australia/Sydney"
@@ -22,7 +22,7 @@ jobs:
       - run: bundle exec rspec
   publish:
     docker:
-      - image: ehdevops/ruby240:latest
+      - image: ehdevops/ruby260-without-browser:latest
     environment:
       TZ: "/usr/share/zoneinfo/Australia/Sydney"
     working_directory: ~/kafka_handle_event
